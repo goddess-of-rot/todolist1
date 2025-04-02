@@ -70,7 +70,7 @@
             text-decoration: line-through;
             color: gray;
         }
-        .delete-btn {
+        .delete-btn, .edit-btn {
             background: #ace5db;
             border: none;
             color: white;
@@ -78,9 +78,16 @@
             border-radius: 5px;
             padding: 5px 10px;
             transition: 0.3s;
+            margin-left: 5px;
+        }
+        .edit-btn {
+            background: #4caf50;
         }
         .delete-btn:hover {
             background: #188ee8;
+        }
+        .edit-btn:hover {
+            background: #388e3c;
         }
     </style>
 </head>
@@ -105,9 +112,13 @@
             if (taskText === "") return;
 
             let li = document.createElement("li");
-            li.innerHTML = `<span>${taskText}</span> <button class="delete-btn" onclick="removeTask(this)">❌</button>`;
+            li.innerHTML = `<span class="task-text">${taskText}</span> 
+                            <button class="edit-btn" onclick="editTask(this)">✏️ Edit</button> 
+                            <button class="delete-btn" onclick="removeTask(this)">❌ Delete</button>`;
             li.addEventListener("click", function() {
-                this.classList.toggle("completed");
+                if (!this.classList.contains("editing")) {
+                    this.classList.toggle("completed");
+                }
             });
 
             document.getElementById("taskList").appendChild(li);
@@ -119,7 +130,18 @@
             button.parentElement.classList.add("fade-out");
             setTimeout(() => button.parentElement.remove(), 300);
         }
+
+        function editTask(button) {
+            let li = button.parentElement;
+            let taskSpan = li.querySelector(".task-text");
+            let newText = prompt("Edit your task:", taskSpan.textContent.replace(" (edited)", ""));
+            if (newText !== null && newText.trim() !== "") {
+                taskSpan.textContent = newText.includes("(edited)") ? newText : newText + " (edited)";
+                li.classList.remove("completed");
+                li.classList.add("editing");
+                setTimeout(() => li.classList.remove("editing"), 500);
+            }
+        }
     </script>
 </body>
 </html>
-
